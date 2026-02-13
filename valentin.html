@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Question très sérieuse 👀</title>
+  <style>
+    :root{--bg:#0b0b12;--card:#141427;--text:#f6f6ff;--muted:#b9b9d6;--yes:#2ee59d;--no:#ff4d6d;}
+    *{box-sizing:border-box;font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;}
+    body{
+      margin:0; min-height:100vh; display:grid; place-items:center;
+      background:
+        linear-gradient(rgba(11,11,18,0.75), rgba(11,11,18,0.85)),
+        url("nous.jpg") center/cover no-repeat fixed;
+
+      color:var(--text);
+      overflow-y:auto;
+    }
+    .card{
+      width:min(520px, 92vw);
+      background: color-mix(in oklab, var(--card) 92%, transparent);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:22px;
+      padding:22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+      position:relative;
+    }
+    .top{
+      display:flex; align-items:center; gap:14px; margin-bottom:10px;
+    }
+    .avatar{
+      width:52px; height:52px; border-radius:16px;
+      display:grid; place-items:center;
+      background: linear-gradient(135deg, rgba(255,77,109,.25), rgba(46,229,157,.18));
+      border:1px solid rgba(255,255,255,.14);
+      font-size:26px;
+    }
+    h1{font-size:18px; margin:0;}
+    p{margin:6px 0 0; color:var(--muted); line-height:1.35; font-size:14px;}
+    .stage{
+      margin-top:14px;
+      background: rgba(255,255,255,.04);
+      border:1px dashed rgba(255,255,255,.14);
+      border-radius:18px;
+      padding:18px;
+      position:relative;
+      min-height:210px;
+      overflow:hidden;
+    }
+    .big{
+      font-size:20px;
+      margin:0 0 12px;
+    }
+    .buttons{
+      display:flex; gap:10px; flex-wrap:wrap;
+      position:relative;
+    }
+    button{
+      border:0; border-radius:14px;
+      padding:12px 16px;
+      font-weight:700;
+      cursor:pointer;
+      transition: transform .12s ease, filter .12s ease;
+      user-select:none;
+    }
+    button:active{transform: translateY(1px) scale(.99);}
+    .yes{background:var(--yes); color:#05311f;}
+    .no{
+      background: color-mix(in oklab, var(--no) 88%, #fff 12%);
+      color:#2a0010;
+      position:relative;
+    }
+
+    /* confettis hearts */
+    .heart{
+      position:absolute; top:-20px;
+      font-size:18px; opacity:.9;
+      animation: fall linear forwards;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.3));
+      pointer-events:none;
+    }
+    @keyframes fall{
+      to{ transform: translateY(280px) rotate(300deg); opacity:0; }
+    }
+
+    .hidden{display:none;}
+    .choices{
+      margin-top:14px;
+      display:grid;
+      gap:10px;
+    }
+    .pill{
+      display:flex; gap:10px; align-items:center;
+      padding:12px 12px;
+      border-radius:16px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .pill input{transform: scale(1.2);}
+    .footer{
+      margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      color:rgba(255,255,255,.6); font-size:12px;
+    }
+    .tiny{
+      opacity:.8;
+    }
+    a.fake{
+      color:#cdd6ff; text-decoration: none; border-bottom:1px dashed rgba(205,214,255,.45);
+    }
+    .toast{
+      position:absolute; inset:auto 18px 18px 18px;
+      background: rgba(10,10,18,.75);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:16px;
+      padding:12px 14px;
+      font-size:13px;
+      color:rgba(255,255,255,.85);
+      backdrop-filter: blur(6px);
+      display:none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="top">
+      <div class="avatar">💘</div>
+      <div>
+        <h1>Coucou mon bb d'amour</h1>
+        <p>Ouvre, lis… et réponds avec honnêteté (le bouton Non est un poco… capricieux).</p>
+      </div>
+    </div>
+
+    <div class="stage" id="stage">
+      <p class="big" id="question">Est-ce que tu veux être mon Valentin ? 🥺👉👈</p>
+
+      <div class="buttons" id="btnRow">
+        <button class="yes" id="yesBtn">Oui 💚</button>
+        <button class="no" id="noBtn">Non 😈</button>
+      </div>
+
+    <div class="hidden" id="afterYes">
+    <p class="big">OK parfait 😌 Choisis tes missions spéciales Barcelone :</p>
+
+    <div class="choices">
+        <label class="pill">
+        <input type="checkbox" value="Cadeau -5€ en 1h">
+        🎁 Trouver un cadeau à moins de 5€ en moins d’1h
+        </label>
+
+        <label class="pill">
+        <input type="checkbox" value="Souvenir le plus moche">
+        🧸 Mission : acheter le souvenir le PLUS moche possible
+        </label>
+        <label class="pill">
+        <input type="checkbox" value="Statue Challenge">
+        🧍 Statue Challenge : dès qu’un mot secret est dit, on se fige 3 secondes
+        </label>
+
+      
+        <label class="pill">
+        <input type="checkbox" value="Oui à tout 30min">
+        😈 Dire oui à tout pendant 1 heure
+        </label>
+
+        <label class="pill">
+        <input type="checkbox" value="Défi 12 dates">
+        🗓️ Défi 12 dates : 1 mini date par mois (chacun en organise 6)
+        </label>
+
+
+        <label class="pill">
+        <input type="checkbox" value="Photo mensuelle">
+        📸 Photo mensuelle : 1 photo “même pose” chaque mois (avant/après)
+        </label>
+
+        <label class="pill">
+        <input type="checkbox" value="Playlist évolutive">
+        🎧 Playlist évolutive : 2 sons par mois à ajouter + écoute ensemble
+        </label>
+
+        <label class="pill">
+        <input type="checkbox" value="Lettre du futur">
+        💌 Lettre du futur : on écrit une lettre à ouvrir dans 1 an
+        </label>
+
+
+
+    </div>
+    </div>
+
+        <div class="footer">
+          <span class="tiny">Choisis 1+ options puis clique :</span>
+          <button class="yes" id="sendBtn">Valider ✅</button>
+        </div>
+      </div>
+
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <div class="footer">
+      <span class="tiny">PS : si tu forces “Non”, le site se défend 🤖</span>
+      <span class="tiny"><a class="fake" href="#" id="resetLink">reset</a></span>
+    </div>
+  </div>
+
+<script>
+  const stage = document.getElementById('stage');
+  const yesBtn = document.getElementById('yesBtn');
+  const noBtn  = document.getElementById('noBtn');
+  const afterYes = document.getElementById('afterYes');
+  const btnRow = document.getElementById('btnRow');
+  const toast = document.getElementById('toast');
+  const sendBtn = document.getElementById('sendBtn');
+  const resetLink = document.getElementById('resetLink');
+
+  // --- "Non" esquive ---
+  let dodgeLevel = 0;
+
+  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+
+  function dodge() {
+    dodgeLevel++;
+    const rect = stage.getBoundingClientRect();
+    const btn  = noBtn.getBoundingClientRect();
+
+    // zone de déplacement dans la carte
+    const padding = 12;
+    const maxX = rect.width  - btn.width  - padding;
+    const maxY = rect.height - btn.height - padding;
+
+    // position aléatoire
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+
+    noBtn.style.position = 'absolute';
+    noBtn.style.left = x + 'px';
+    noBtn.style.top  = y + 'px';
+
+    // petit message qui change
+    const lines = [
+      "Nan mais ça essaye VRAIMENT de cliquer Non là ? 😭",
+      "sérieux la????",
+      "nique ta race , t'abuses",
+      "Nathannnnnnnnnnnnnnn :) ",
+      "Mais arrete connard"
+    ];
+    showToast(lines[(dodgeLevel-1) % lines.length]);
+
+    // plus tu essayes, plus ça accélère
+    const scale = clamp(1 + dodgeLevel*0.03, 1, 1.2);
+    noBtn.style.transform = `scale(${scale})`;
+  }
+
+  // esquive au survol (PC) + au touchstart (mobile)
+  noBtn.addEventListener('mouseenter', dodge);
+  noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dodge(); }, {passive:false});
+  noBtn.addEventListener('click', (e) => { e.preventDefault(); dodge(); });
+
+  // --- Confettis cœurs ---
+  function heartsBurst(count=18){
+    const emojis = ["💖","💘","💗","💞","💓","💕"];
+    for(let i=0;i<count;i++){
+      const s = document.createElement('div');
+      s.className = 'heart';
+      s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      const x = Math.random() * (stage.clientWidth - 20);
+      const dur = 1.2 + Math.random()*1.2;
+      s.style.left = x + 'px';
+      s.style.animationDuration = dur + 's';
+      s.style.transform = `translateY(0) rotate(${Math.random()*120}deg)`;
+      stage.appendChild(s);
+      setTimeout(()=>s.remove(), dur*1000 + 200);
+    }
+  }
+
+  // --- UI après "Oui" ---
+  yesBtn.addEventListener('click', () => {
+    heartsBurst(26);
+    btnRow.classList.add('hidden');
+    afterYes.classList.remove('hidden');
+    showToast("Réponse enregistrée : OUI ✅ (excellent choix)");
+  });
+
+  // --- Validation des options ---
+  sendBtn.addEventListener('click', () => {
+    const picked = [...afterYes.querySelectorAll('input[type="checkbox"]:checked')]
+        .map(i => i.value);
+
+    if(picked.length === 0){
+        showToast("Choisis au moins une option 😌");
+        return;
+    }
+
+    const sujet = "Réponse Valentin 💌";
+    const message = "J'ai choisi : " + picked.join(", ");
+
+    window.location.href =
+        "mailto:benamoreya87@gmail.com?subject=" +
+        encodeURIComponent(sujet) +
+        "&body=" +
+        encodeURIComponent(message);
+   });
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(()=>{ toast.style.display = 'none'; }, 2600);
+  }
+
+  // Reset
+  resetLink.addEventListener('click', (e)=>{
+    e.preventDefault();
+    dodgeLevel = 0;
+    btnRow.classList.remove('hidden');
+    afterYes.classList.add('hidden');
+    noBtn.style.position = 'relative';
+    noBtn.style.left = 'auto';
+    noBtn.style.top = 'auto';
+    noBtn.style.transform = 'none';
+    showToast("Reset ✅");
+  });
+</script>
+</body>
+</html>
